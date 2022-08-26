@@ -18,14 +18,18 @@ export class AppComponent implements OnInit {
     conected: false,
   };
   users: any[] = [];
+  messages: Message[] = [];
   form: FormGroup = this.fb.group({
-    user: ['', Validators.required],
-    message: ['', Validators.required],
+    // user: ['', Validators.required],
+    message: ['', [Validators.required, Validators.minLength(3)]],
   });
-  jwt: FormControl = this.fb.control('', Validators.required);
+  jwt: FormControl = this.fb.control('', [
+    Validators.required,
+    Validators.minLength(3),
+  ]);
   private URLWS: string = 'http://localhost:3000/socket.io/socket.io.js';
   manager: any;
-  socket: any;
+  socket!: Socket;
   //#endregion variables
 
   constructor(
@@ -45,6 +49,7 @@ export class AppComponent implements OnInit {
       },
     });
 
+    this.socket?.removeAllListeners();
     this.socket = this.manager.socket('/');
 
     this.socket.on('connect', () => {
@@ -58,13 +63,13 @@ export class AppComponent implements OnInit {
 
     this.socket.on('clients-updated', (clients: string[]) => {
       console.log(clients);
-      this.users = clients
+      this.users = clients;
     });
 
     this.socket.on(
       'message-from-server',
       (payload: { fullName: string; message: string }) => {
-        console.log(payload);
+        this.messages.push(payload);
       }
     );
   }
@@ -77,6 +82,13 @@ export class AppComponent implements OnInit {
       id: 'YO!!',
       message: this.form.get('message')?.value,
     });
-    console.log(this.form.value, this.jwt.value);
+    console.log(this.socket);
+
+    // console.log(this.form.value, this.jwt.value);
   }
+}
+
+interface Message {
+  fullName: string;
+  message: string;
 }

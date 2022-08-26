@@ -2,9 +2,10 @@
 <hr />
 <span>{{ settings.conected ? "online" : "offline" }}</span>
 
-<br>
-<input class="" [formControl]="jwt" type="text" placeholder="jwt">
+<br />
+<input class="" [formControl]="jwt" type="text" placeholder="jwt" />
 <button class="btn btn-primary" (click)="connectToServer()">Connect</button>
+<h3>Conected:</h3>
 <ul>
   <li *ngFor="let user of users; index as i_user">{{ user }}</li>
 </ul>
@@ -17,5 +18,7 @@
 <h3>messages:</h3>
 
 <ul>
-  <li></li>
+  <li *ngFor="let message of messages">
+    <strong>{{ message.fullName }}:</strong> <span>{{ message.message }}</span>
+  </li>
 </ul>
